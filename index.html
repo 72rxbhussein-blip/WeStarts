@@ -1,661 +1,376 @@
-<!DOCTYPE html>
+     <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تحميل فيديوهات يوتيوب - بأعلى جودة</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WeStars </title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --bg: #0a0a0b;
+            --card: #161618;
+            --input-border: #2d2d30;
+            --accent: #00d1b2;
+            --text: #ffffff;
+            --text-dim: #a0a0a0;
+            --error: #ff4757;
+            --star-color: #f1c40f;
+            --tiktok-bg: #000000;
+        }
+
+        [data-theme="light"] {
+            --bg: #f5f6fa;
+            --card: #ffffff;
+            --input-border: #dcdde1;
+            --text: #1a1a1c;
+            --text-dim: #57606f;
+            --tiktok-bg: #000000;
+        }
+
+        * { 
+            transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease; 
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0; 
+            padding: env(safe-area-inset-top) 15px env(safe-area-inset-bottom) 15px; /* دعم نوتش الآيفون */
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; position: relative;
+            overflow-x: hidden;
         }
+
+        /* تحسين التحكم العلوي ليناسب كل الشاشات */
+        .top-controls {
+            position: absolute; top: 20px; right: 20px;
+            display: flex; gap: 10px; z-index: 1000;
+        }
+
+        .icon-btn {
+            width: 45px; height: 45px; /* زيادة بسيطة لسهولة اللمس */
+            background: var(--card); border: 1px solid var(--input-border);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--primary); font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .full-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg);
+            z-index: 2000; display: flex; flex-direction: column; align-items: center;
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+        .full-overlay.active { transform: translateY(0); }
+        .close-overlay { align-self: flex-start; margin-bottom: 20px; font-size: 1.8rem; cursor: pointer; color: var(--primary); }
+
+        .social-card {
+            width: 100%; max-width: 350px; padding: 18px; margin-bottom: 12px;
+            border-radius: 18px; text-decoration: none; color: white !important;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+        }
+
+        .social-tiktok { background: var(--tiktok-bg); border: 1px solid #333; }
+        .social-insta { background: linear-gradient(45deg, #f09433, #bc1888); }
+        .social-fb { background: #1877f2; }
+        .social-yt { background: #ff0000; }
+
+        .brand {
+            font-size: clamp(2.5rem, 10vw, 4rem); 
+            font-weight: 900; margin: 100px 0 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        /* تحسين الحاوية الأساسية لتناسب الكمبيوتر والموبايل */
+        .container { 
+            width: 100%; 
+            max-width: 600px; /* عرض مثالي للكمبيوتر */
+            padding: 0 5px; 
+        }
+
+        .input-group { position: relative; margin-bottom: 20px; }
         
-        .container {
+        .input-box {
+            width: 100%; padding: 22px 55px 22px 20px;
+            background: var(--card); border: 2px solid var(--input-border);
+            border-radius: 22px; color: var(--text); font-size: 1.1rem;
+            outline: none; text-align: right; direction: ltr;
+        }
+        .input-box::placeholder { direction: rtl; color: var(--text-dim); }
+
+        .paste-btn { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 1.3rem; cursor: pointer; padding: 5px; }
+
+        .main-btn {
+            width: 100%; padding: 20px; background: var(--primary);
+            border: none; border-radius: 20px; color: white;
+            font-size: 1.2rem; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .video-card {
+            display: none; margin-top: 25px; background: var(--card);
+            border-radius: 25px; padding: 15px; border: 1px solid var(--input-border);
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from {opacity: 0; transform: translateY(10px);} to {opacity: 1; transform: translateY(0);} }
+
+        .video-preview { width: 100%; border-radius: 18px; overflow: hidden; background: #000; }
+        video { width: 100%; max-height: 70vh; /* تحديد الطول ليتناسب مع الموبايل */ }
+
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+        .btn-action { padding: 15px; border: none; border-radius: 15px; color: white; font-weight: 700; cursor: pointer; font-size: 1rem; }
+        .btn-reset { grid-column: span 2; color: var(--text); margin-top: 5px; }
+
+        /* ستايل التحميلات المتجاوب */
+        .history-section { width: 100%; margin-top: 40px; border-top: 1px solid var(--input-border); padding-top: 20px; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .history-header h3 { font-size: 1rem; margin: 0; color: var(--text-dim); }
+        .archive-trigger { color: var(--primary); font-size: 1.3rem; cursor: pointer; padding: 5px; }
+
+        .history-item {
+            background: var(--card); padding: 12px; border-radius: 20px;
+            margin-bottom: 12px; border: 1px solid var(--input-border);
+            display: flex; align-items: center; justify-content: space-between; gap: 12px;
             width: 100%;
-            max-width: 800px;
         }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
+
+        .history-content { flex: 1; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+        .history-url { direction: ltr; font-size: 0.85rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 5px; }
+        .history-btn { color: var(--primary); font-weight: 700; cursor: pointer; font-size: 0.95rem; }
+        .history-thumb { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; background: #222; flex-shrink: 0; }
+
+        /* تنبيهات مخصصة للجوال */
+        #customAlert {
+            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 40px); max-width: 350px; background: var(--card);
+            padding: 18px; border-radius: 20px; border: 1px solid var(--input-border);
+            display: flex; align-items: center; gap: 12px; z-index: 10000;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: var(--text);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        
-        .logo {
-            font-size: 4rem;
-            color: #ff0000;
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        #customAlert.show { top: 30px; }
+
+        /* استعلامات الوسائط للأجهزة اللوحية والكمبيوتر */
+        @media (min-width: 768px) {
+            body { padding-top: 50px; }
+            .container { padding: 0; }
+            .actions { gap: 20px; }
+            .history-item { padding: 15px; }
         }
-        
-        .logo-shorts {
-            font-size: 3rem;
-            color: #ffffff;
-            background: linear-gradient(45deg, #ff0000, #ff6b6b);
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 15px;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+
+        .star-loader {
+            display: none; font-size: 1.4rem; color: transparent;
+            -webkit-text-stroke: 1.5px var(--star-color);
+            animation: starAnim 1s infinite linear;
         }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #ff0000, #ff6b6b);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        
-        .tagline {
-            color: #a4b0be;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-        
-        .input-container {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 5px;
-            margin-bottom: 25px;
-            border: 2px solid transparent;
-            transition: all 0.3s;
-        }
-        
-        .input-container:focus-within {
-            border-color: #ff4757;
-            box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
-        }
-        
-        .input-wrapper {
-            display: flex;
-            align-items: center;
-        }
-        
-        .url-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            padding: 18px 20px;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-        }
-        
-        .url-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .icon {
-            padding: 0 20px;
-            color: #ff4757;
-            font-size: 1.2rem;
-        }
-        
-        .download-btn {
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(45deg, #ff0000, #ff6b6b);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 10px;
-        }
-        
-        .download-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(255, 0, 0, 0.3);
-        }
-        
-        .download-btn:active {
-            transform: translateY(0);
-        }
-        
-        .quality-badge {
-            display: inline-block;
-            background: linear-gradient(45deg, #00b09b, #96c93d);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-        
-        .loading {
-            display: none;
-            margin-top: 30px;
-            text-align: center;
-        }
-        
-        .loading.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        
-        .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top: 4px solid #ff4757;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        .loading-text {
-            color: #a4b0be;
-            font-size: 1.1rem;
-        }
-        
-        .result {
-            display: none;
-            margin-top: 30px;
-            animation: fadeIn 0.5s;
-        }
-        
-        .result.active {
-            display: block;
-        }
-        
-        .download-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .download-option {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-        
-        .download-option:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: #ff4757;
-            transform: translateY(-2px);
-        }
-        
-        .option-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .option-icon {
-            font-size: 2rem;
-            color: #ff4757;
-        }
-        
-        .option-details h3 {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-        
-        .option-details p {
-            color: #a4b0be;
-            font-size: 0.9rem;
-        }
-        
-        .option-action {
-            background: linear-gradient(45deg, #00b09b, #96c93d);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .option-action:hover {
-            transform: scale(1.05);
-            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.3);
-        }
-        
-        .error {
-            background: rgba(255, 71, 87, 0.15);
-            border-right: 5px solid #ff4757;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            display: none;
-            text-align: right;
-        }
-        
-        .error.active {
-            display: block;
-            animation: fadeIn 0.5s;
-        }
-        
-        .error-icon {
-            color: #ff4757;
-            margin-left: 10px;
-        }
-        
-        .footer {
-            margin-top: 30px;
-            color: #a4b0be;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @media (max-width: 768px) {
-            .card {
-                padding: 30px 20px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .logo {
-                font-size: 3rem;
-            }
-            
-            .logo-shorts {
-                width: 60px;
-                height: 60px;
-                font-size: 2.2rem;
-            }
-            
-            .download-option {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-            
-            .option-info {
-                flex-direction: column;
-                text-align: center;
-            }
-        }
-        
-        .simple-mode {
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .simple-mode-text {
-            color: #70a1ff;
-            font-size: 1rem;
-            margin-bottom: 10px;
-        }
+        @keyframes starAnim { to { transform: rotate(360deg); } }
     </style>
 </head>
-<body>
+<body data-theme="dark">
+
+    <div class="top-controls">
+        <div class="icon-btn" onclick="toggleOverlay('menuOverlay')" title="القائمة"><i class="fas fa-ellipsis-v"></i></div>
+        <div class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="تغيير الثيم"><i class="fas fa-moon"></i></div>
+    </div>
+
+    <div class="full-overlay" id="menuOverlay">
+        <i class="fas fa-arrow-right close-overlay" onclick="toggleOverlay('menuOverlay')"></i>
+        <div style="font-size: 1.8rem; font-weight: 700; margin-bottom: 25px; text-align: center;">تابعنا على:</div>
+        <a href="https://www.tiktok.com/@72rxb" target="_blank" class="social-card social-tiktok"><i class="fab fa-tiktok"></i> تيك توك</a>
+        <a href="https://www.instagram.com/72rxb" target="_blank" class="social-card social-insta"><i class="fab fa-instagram"></i> انستغرام</a>
+        <a href="https://www.facebook.com/share/1D54JBBkJh/" target="_blank" class="social-card social-fb"><i class="fab fa-facebook-f"></i> فيسبوك</a>
+        <a href="https://youtube.com/@72rxb" target="_blank" class="social-card social-yt"><i class="fab fa-youtube"></i> يوتيوب</a>
+    </div>
+
+    <div class="full-overlay" id="archiveOverlay">
+        <i class="fas fa-arrow-right close-overlay" onclick="toggleOverlay('archiveOverlay')"></i>
+        <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; width: 100%; text-align: center;">أرشيف التحميلات</div>
+        <div id="fullHistoryContainer" style="width: 100%; max-width: 550px; margin: 0 auto;"></div>
+    </div>
+
+    <div class="brand">WeStars</div>
+
     <div class="container">
-        <div class="card">
-            <div>
-                <i class="fab fa-youtube logo"></i>
-                <i class="fas fa-mobile-alt logo-shorts"></i>
+        <div class="input-group">
+            <input type="text" id="urlInput" class="input-box" placeholder="...الصق الرابط هنا">
+            <i class="fas fa-paste paste-btn" onclick="pasteLink()"></i>
+        </div>
+
+        <button class="main-btn" onclick="processVideo()">
+            <span id="btnText">استخراج الفيديو</span>
+            <i class="far fa-star star-loader" id="starLoader"></i>
+        </button>
+
+        <div id="resultCard" class="video-card">
+            <div class="video-preview">
+                <video id="videoPlayer" controls playsinline></video>
             </div>
-            
-            <h1>تحميل فيديوهات يوتيوب</h1>
-            <p class="tagline">حمل أي فيديو يوتيوب أو شورتس بأعلى جودة متاحة</p>
-            
-            <div class="quality-badge">
-                <i class="fas fa-crown"></i> أعلى جودة تلقائياً
+            <div class="actions">
+                <button onclick="downloadNow()" class="btn-action btn-download" style="background:var(--accent);"><i class="fas fa-download"></i> حفظ </button>
+                <button onclick="copyLink()" class="btn-action btn-copy" style="background:var(--input-border); color:var(--text);"><i class="fas fa-copy"></i> نسخ</button>
+                <button onclick="location.reload()" class="btn-action btn-reset" style="background:var(--input-border);"><i class="fas fa-redo"></i> جديد</button>
             </div>
-            
-            <div class="input-container">
-                <div class="input-wrapper">
-                    <i class="fas fa-link icon"></i>
-                    <input type="text" class="url-input" id="url-input" placeholder="الصق رابط فيديو يوتيوب أو شورتس هنا...">
-                </div>
+        </div>
+
+        <div class="history-section" id="historySection">
+            <div class="history-header">
+                <h3>آخر التحميلات:</h3>
+                <i class="fas fa-box-archive archive-trigger" onclick="toggleOverlay('archiveOverlay')" title="الأرشيف"></i>
             </div>
-            
-            <button class="download-btn" id="download-btn">
-                <i class="fas fa-download"></i>
-                تحميل بأعلى جودة
-            </button>
-            
-            <div class="simple-mode">
-                <p class="simple-mode-text"><i class="fas fa-bolt"></i> الوضع السريع: أدخل الرابط واضغط تحميل</p>
-            </div>
-            
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p class="loading-text">جاري تحليل الرابط وإعداد التحميل بأعلى جودة...</p>
-            </div>
-            
-            <div class="error" id="error">
-                <p><i class="fas fa-exclamation-triangle error-icon"></i> <span id="error-message"></span></p>
-            </div>
-            
-            <div class="result" id="result">
-                <div class="download-options" id="download-options">
-                    <!-- خيارات التحميل ستظهر هنا -->
-                </div>
-            </div>
-            
-            <div class="footer">
-                <p>يدعم جميع أنواع فيديوهات يوتيوب والشورتس | يعمل على جميع الأجهزة</p>
-                <p style="margin-top: 5px;">© 2023 - التحميل بأعلى جودة متاحة تلقائياً</p>
-            </div>
+            <div id="mainHistoryList"></div>
         </div>
     </div>
 
+    <div id="customAlert">
+        <i id="alertIcon" class="fas fa-info-circle"></i>
+        <span id="alertMsg"></span>
+    </div>
+
     <script>
-        // عناصر DOM
-        const urlInput = document.getElementById('url-input');
-        const downloadBtn = document.getElementById('download-btn');
-        const loading = document.getElementById('loading');
-        const error = document.getElementById('error');
-        const errorMessage = document.getElementById('error-message');
-        const result = document.getElementById('result');
-        const downloadOptions = document.getElementById('download-options');
-        
-        // استخراج معرف الفيديو من رابط يوتيوب
-        function extractVideoId(url) {
-            let videoId = '';
+        // بقية السكربت الخاص بك بدون تغيير لضمان عمل الموقع كما هو
+        let currentVideoLink = "";
+
+        function toggleOverlay(id) {
+            document.getElementById(id).classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeBtn = document.getElementById('themeBtn');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            const newTheme = isDark ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', newTheme);
+        }
+
+        if(localStorage.getItem('theme') === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+            document.getElementById('themeBtn').innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        function notify(msg, type = 'success') {
+            const alert = document.getElementById('customAlert');
+            const icon = document.getElementById('alertIcon');
+            document.getElementById('alertMsg').innerText = msg;
+            alert.style.borderColor = type === 'error' ? 'var(--error)' : 'var(--accent)';
+            icon.style.color = type === 'error' ? 'var(--error)' : 'var(--accent)';
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 3000);
+        }
+
+        async function pasteLink() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('urlInput').value = text;
+                notify("تم اللصق");
+            } catch (err) { notify("خطأ في اللصق", "error"); }
+        }
+
+        async function processVideo() {
+            const url = document.getElementById('urlInput').value;
+            const btnText = document.getElementById('btnText');
+            const star = document.getElementById('starLoader');
+
+            if(!url) { notify("ضع الرابط أولاً", "error"); return; }
+            btnText.style.display = 'none'; star.style.display = 'block';
+
+            try {
+                let apiUrl = url.includes("tiktok.com") 
+                    ? `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}`
+                    : `https://api.boxentriq.com/social/any?url=${encodeURIComponent(url)}`;
+
+                const response = await fetch(apiUrl);
+                const result = await response.json();
+                
+                currentVideoLink = result.data?.play || result.video_url || result.url;
+                let thumb = result.data?.cover || result.thumbnail || result.picture || "";
+
+                if(currentVideoLink) {
+                    document.getElementById('videoPlayer').src = currentVideoLink;
+                    document.getElementById('resultCard').style.display = 'block';
+                    saveToHistory(url, thumb);
+                    notify("تم الاستخراج ✨");
+                    window.scrollTo({ top: 100, behavior: 'smooth' });
+                } else { throw new Error(); }
+            } catch (e) { notify("الرابط غير مدعوم", "error"); }
+            finally { btnText.style.display = 'block'; star.style.display = 'none'; }
+        }
+
+        function saveToHistory(url, thumb) {
+            let history = JSON.parse(localStorage.getItem('ws_history_v2') || '[]');
+            history = history.filter(i => i.url !== url);
+            history.unshift({url, thumb, date: new Date().toLocaleDateString('ar-EG')});
+            localStorage.setItem('ws_history_v2', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const history = JSON.parse(localStorage.getItem('ws_history_v2') || '[]');
+            const mainList = document.getElementById('mainHistoryList');
+            const fullList = document.getElementById('fullHistoryContainer');
             
-            // لنوع Shorts
-            if (url.includes('shorts')) {
-                const shortsMatch = url.match(/shorts\/([a-zA-Z0-9_-]{11})/);
-                if (shortsMatch && shortsMatch[1]) {
-                    videoId = shortsMatch[1];
-                }
-            } 
-            // للنوع العادي
-            else {
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-                const match = url.match(regExp);
-                if (match && match[2].length === 11) {
-                    videoId = match[2];
-                }
+            if(history.length === 0) {
+                mainList.innerHTML = '<p style="text-align:center; opacity:0.5; font-size:0.8rem;">لا توجد تحميلات حالياً</p>';
+                return;
             }
-            
-            return videoId;
+
+            const mainItems = history.slice(0, 3);
+            mainList.innerHTML = mainItems.map(item => generateItemHTML(item)).join('');
+            fullList.innerHTML = history.map(item => generateItemHTML(item)).join('');
         }
-        
-        // التحقق من صحة رابط يوتيوب
-        function isValidYouTubeUrl(url) {
-            const pattern = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
-            return pattern.test(url);
-        }
-        
-        // عرض رسالة خطأ
-        function showError(message) {
-            errorMessage.textContent = message;
-            error.classList.add('active');
-            
-            setTimeout(() => {
-                error.classList.remove('active');
-            }, 5000);
-        }
-        
-        // إخفاء رسالة الخطأ
-        function hideError() {
-            error.classList.remove('active');
-        }
-        
-        // محاكاة بيانات أعلى جودة للفيديو
-        function getHighestQualityFormats(videoId, isShorts) {
-            if (isShorts) {
-                return [
-                    { 
-                        type: 'فيديو', 
-                        quality: 'أعلى جودة', 
-                        format: 'MP4 1080p', 
-                        size: '45-65 ميجابايت',
-                        desc: 'فيديو قصير عمودي بأعلى دقة'
-                    },
-                    { 
-                        type: 'صوت', 
-                        quality: 'أعلى جودة', 
-                        format: 'MP3 320kbps', 
-                        size: '3-5 ميجابايت',
-                        desc: 'صوت عالي الجودة'
-                    }
-                ];
-            } else {
-                return [
-                    { 
-                        type: 'فيديو', 
-                        quality: 'أعلى جودة', 
-                        format: 'MP4 1080p', 
-                        size: '120-200 ميجابايت',
-                        desc: 'فيديو عالي الدقة Full HD'
-                    },
-                    { 
-                        type: 'فيديو', 
-                        quality: 'متوسط', 
-                        format: 'MP4 720p', 
-                        size: '70-100 ميجابايت',
-                        desc: 'جودة متوسطة لحجم أقل'
-                    },
-                    { 
-                        type: 'صوت', 
-                        quality: 'أعلى جودة', 
-                        format: 'MP3 320kbps', 
-                        size: '10-15 ميجابايت',
-                        desc: 'صوت عالي الجودة'
-                    }
-                ];
-            }
-        }
-        
-        // عرض خيارات التحميل
-        function displayDownloadOptions(formats, videoId) {
-            downloadOptions.innerHTML = '';
-            
-            formats.forEach(format => {
-                const option = document.createElement('div');
-                option.className = 'download-option';
-                
-                let icon = 'fa-file-video';
-                if (format.type === 'صوت') {
-                    icon = 'fa-file-audio';
-                }
-                
-                option.innerHTML = `
-                    <div class="option-info">
-                        <i class="fas ${icon} option-icon"></i>
-                        <div class="option-details">
-                            <h3>${format.type} - ${format.format}</h3>
-                            <p>${format.desc} • ${format.size}</p>
-                        </div>
+
+        function generateItemHTML(item) {
+            return `
+                <div class="history-item">
+                    <div class="history-content">
+                        <div class="history-url">${item.url}</div>
+                        <div class="history-btn" onclick="reDownload('${item.url}')">إعادة تحميل</div>
                     </div>
-                    <button class="option-action" data-type="${format.type}" data-quality="${format.quality}">
-                        تحميل
-                    </button>
-                `;
-                
-                // إضافة حدث النقر لزر التحميل
-                const downloadBtn = option.querySelector('.option-action');
-                downloadBtn.addEventListener('click', () => {
-                    startDownload(format, videoId);
-                });
-                
-                downloadOptions.appendChild(option);
-            });
-        }
-        
-        // بدء عملية التحميل
-        function startDownload(format, videoId) {
-            // في التطبيق الحقيقي، هنا سيتم توجيه المستخدم لرابط التحميل
-            // لكن لأغراض العرض، سنظهر رسالة
-            const message = `جاري تحميل ${format.type} ${format.format}\n\nهذا مجرد عرض توضيحي. في التطبيق الحقيقي:\n1. سيتم إرسال الطلب إلى الخادم\n2. معالجة الفيديو باستخدام yt-dlp\n3. توجيهك لرابط التحميل المباشر`;
-            
-            // إنشاء نافذة تحميل وهمية
-            const downloadWindow = document.createElement('div');
-            downloadWindow.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0, 0, 0, 0.9);
-                padding: 30px;
-                border-radius: 15px;
-                z-index: 1000;
-                text-align: center;
-                border: 2px solid #ff4757;
-                max-width: 90%;
-                width: 400px;
-            `;
-            
-            downloadWindow.innerHTML = `
-                <h3 style="color: #ff4757; margin-bottom: 20px;"><i class="fas fa-download"></i> جاري التحميل</h3>
-                <p style="margin-bottom: 20px;">${format.type} ${format.format}</p>
-                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 20px;">
-                    <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.2); border-radius: 5px; overflow: hidden;">
-                        <div id="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #ff0000, #ff6b6b); transition: width 2s;"></div>
-                    </div>
-                    <p id="progress-text" style="margin-top: 10px;">جاري التحضير...</p>
+                    <img src="${item.thumb || ''}" class="history-thumb" onerror="this.src='https://via.placeholder.com/70/222/fff?text=Video'">
                 </div>
-                <button id="close-btn" style="background: #ff4757; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer;">إغلاق</button>
             `;
-            
-            document.body.appendChild(downloadWindow);
-            
-            // محاكاة تقدم التحميل
-            setTimeout(() => {
-                const progressBar = document.getElementById('progress-bar');
-                const progressText = document.getElementById('progress-text');
-                
-                progressBar.style.width = '30%';
-                progressText.textContent = 'جاري جلب بيانات الفيديو...';
-                
-                setTimeout(() => {
-                    progressBar.style.width = '70%';
-                    progressText.textContent = 'جاري تحويل التنسيق...';
-                    
-                    setTimeout(() => {
-                        progressBar.style.width = '100%';
-                        progressText.textContent = 'جاهز للتحميل!';
-                        
-                        setTimeout(() => {
-                            downloadWindow.remove();
-                            alert(`✅ تم إعداد ${format.type} ${format.format} للتحميل!\n\nفي التطبيق الحقيقي، سيبدأ التحميل تلقائياً.`);
-                        }, 1000);
-                    }, 1500);
-                }, 1500);
-            }, 500);
-            
-            // زر الإغلاق
-            document.getElementById('close-btn').addEventListener('click', () => {
-                downloadWindow.remove();
-            });
         }
-        
-        // معالجة طلب التحميل
-        downloadBtn.addEventListener('click', async () => {
-            const videoUrl = urlInput.value.trim();
-            
-            // تحقق من إدخال الرابط
-            if (!videoUrl) {
-                showError('الرجاء إدخال رابط فيديو يوتيوب');
-                urlInput.focus();
-                return;
-            }
-            
-            // تحقق من صحة الرابط
-            if (!isValidYouTubeUrl(videoUrl)) {
-                showError('الرابط غير صحيح. تأكد من أنه رابط فيديو يوتيوب أو شورتس');
-                return;
-            }
-            
-            // إخفاء أي رسائل خطأ سابقة
-            hideError();
-            result.classList.remove('active');
-            
-            // عرض حالة التحميل
-            loading.classList.add('active');
-            
-            // محاكاة وقت المعالجة
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // استخراج معرف الفيديو
-            const videoId = extractVideoId(videoUrl);
-            
-            if (!videoId) {
-                loading.classList.remove('active');
-                showError('تعذر استخراج معرف الفيديو. تأكد من صحة الرابط');
-                return;
-            }
-            
-            // تحديد ما إذا كان الفيديو شورتس
-            const isShorts = videoUrl.includes('shorts');
-            
-            // الحصول على خيارات أعلى جودة
-            const formats = getHighestQualityFormats(videoId, isShorts);
-            
-            // عرض خيارات التحميل
-            displayDownloadOptions(formats, videoId);
-            
-            // إخفاء حالة التحميل وإظهار النتائج
-            loading.classList.remove('active');
-            result.classList.add('active');
-            
-            // تمرير إلى قسم النتائج
-            result.scrollIntoView({ behavior: 'smooth' });
-        });
-        
-        // السماح باستخدام مفتاح Enter لتفعيل الزر
-        urlInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                downloadBtn.click();
-            }
-        });
-        
-        // تفعيل التركيز على حقل الإدخال عند تحميل الصفحة
-        window.addEventListener('DOMContentLoaded', () => {
-            urlInput.focus();
-        });
-        
-        // مسح حقل الإدخال عند النقر عليه (اختياري)
-        urlInput.addEventListener('click', function() {
-            if (this.value === '') {
-                this.placeholder = 'مثال: https://youtube.com/watch؟v=xxxx أو https://youtube.com/shorts/xxxx';
-            }
-        });
+
+        function reDownload(url) {
+            document.getElementById('urlInput').value = url;
+            document.getElementById('archiveOverlay').classList.remove('active');
+            processVideo();
+        }
+
+        async function downloadNow() {
+            if(!currentVideoLink) return;
+            notify("جاري الحفظ...");
+            try {
+                const res = await fetch(currentVideoLink);
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = `WeStars_${Date.now()}.mp4`;
+                document.body.appendChild(a); a.click();
+            } catch (e) { window.open(currentVideoLink, '_blank'); }
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(currentVideoLink);
+            notify("تم النسخ");
+        }
+
+        window.onload = renderHistory;
     </script>
 </body>
-    </html>
+</html>
+
