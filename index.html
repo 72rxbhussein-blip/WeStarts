@@ -1,4 +1,4 @@
-   <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -101,11 +101,55 @@
         .main-btn { width: 100%; padding: 18px; background: var(--primary); border: none; border-radius: 20px; color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         
         .video-card { display: none; margin-top: 25px; background: var(--card); border-radius: 25px; padding: 15px; border: 1px solid var(--input-border); }
-        .video-preview { width: 100%; border-radius: 18px; overflow: hidden; background: #000; position: relative; }
+        .video-preview { width: 100%; border-radius: 18px; overflow: hidden; background: #000; position: relative; display: flex; align-items: center; justify-content: center; min-height: 300px; }
         
         #videoContainer { position: relative; width: 100%; display: flex; flex-direction: column; }
-        video { width: 100%; max-height: 500px; display: block; cursor: default; }
+        video { width: 100%; max-height: 600px; display: block; cursor: default; }
+
+        #imageSlider { width: 100%; display: none; position: relative; background: #000; overflow: hidden; }
+        .slider-wrapper { 
+            display: flex; 
+            overflow-x: hidden;
+            scrollbar-width: none; 
+            -ms-overflow-style: none; 
+            scroll-behavior: smooth; 
+            touch-action: none;
+            width: 100%;
+        }
+        .slider-wrapper::-webkit-scrollbar { display: none; }
+        .slider-img { width: 100%; flex-shrink: 0; object-fit: contain; max-height: 600px; min-height: 300px; display: block; }
         
+        .slider-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            width: 40px; height: 40px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            z-index: 35;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.8;
+        }
+
+        .slider-arrow:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-50%) scale(1.1); opacity: 1; }
+        .slider-arrow-prev { left: 12px; }
+        .slider-arrow-next { right: 12px; }
+
+        .slider-dots {
+            position: absolute; bottom: 15px; left: 50%;
+            transform: translateX(-50%);
+            display: flex; gap: 6px; z-index: 30;
+            background: rgba(0,0,0,0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.4); border-radius: 50%; transition: all 0.4s ease; }
+        .dot.active { background: #fff; transform: scale(1.4); }
+
         .custom-controls {
             position: absolute; bottom: 0; left: 0; right: 0;
             background: linear-gradient(transparent, rgba(0,0,0,0.8));
@@ -115,64 +159,25 @@
         }
         .custom-controls.visible { opacity: 1; visibility: visible; }
         
-        .time-display {
-            display: flex; justify-content: space-between;
-            font-size: 0.8rem; color: #fff; font-family: monospace;
-            margin-bottom: -5px;
-        }
+        .time-display { display: flex; justify-content: space-between; font-size: 0.8rem; color: #fff; font-family: monospace; margin-bottom: -5px; }
+        .progress-bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; cursor: pointer; position: relative; display: flex; align-items: center; padding: 10px 0; }
+        .progress-bar-fill { height: 6px; background: var(--primary); width: 0%; border-radius: 10px; position: relative; pointer-events: none; }
+        .progress-bar-fill::after { content: ''; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
 
-        .progress-bar-container {
-            width: 100%; height: 6px; background: rgba(255,255,255,0.2);
-            border-radius: 10px; cursor: pointer; position: relative;
-            display: flex; align-items: center; padding: 10px 0;
-        }
-        .progress-bar-fill {
-            height: 6px; background: var(--primary); width: 0%; border-radius: 10px;
-            position: relative; pointer-events: none;
-        }
-        .progress-bar-fill::after {
-            content: ''; position: absolute; left: -8px; top: 50%;
-            transform: translateY(-50%);
-            width: 16px; height: 16px; background: #fff; border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        .player-btns {
-            display: flex; align-items: center; justify-content: space-between; margin-top: 5px;
-        }
+        .player-btns { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; }
         .player-btns-group { display: flex; align-items: center; gap: 18px; }
         .player-btns i { color: #fff; font-size: 1.4rem; cursor: pointer; transition: 0.2s; }
 
-        .skip-feedback {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            width: 80px; height: 80px; background: rgba(255,255,255,0.15);
-            border-radius: 50%; display: none; align-items: center; justify-content: center;
-            flex-direction: column; font-size: 0.8rem; color: #fff; z-index: 5;
-            pointer-events: none; animation: skipFade 0.6s ease-out;
-        }
-        .skip-left { left: 15%; }
-        .skip-right { right: 15%; }
+        .skip-feedback { position: absolute; top: 50%; transform: translateY(-50%); width: 80px; height: 80px; background: rgba(255,255,255,0.15); border-radius: 50%; display: none; align-items: center; justify-content: center; flex-direction: column; font-size: 0.8rem; color: #fff; z-index: 5; pointer-events: none; animation: skipFade 0.6s ease-out; }
+        .skip-left { left: 15%; } .skip-right { right: 15%; }
         @keyframes skipFade { 0% { opacity: 0; transform: translateY(-50%) scale(0.5); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(-50%) scale(1.2); } }
 
-        .video-end-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-            display: none; align-items: center; justify-content: center; z-index: 25;
-        }
-        .replay-icon {
-            width: 70px; height: 70px; background: var(--primary);
-            color: white; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; font-size: 1.8rem;
-            cursor: pointer; box-shadow: 0 0 20px rgba(108, 92, 231, 0.5);
-        }
+        .video-end-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 25; }
+        .replay-icon { width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; box-shadow: 0 0 20px rgba(108, 92, 231, 0.5); }
 
         .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn-action { 
-            padding: 12px; border: none; border-radius: 12px; color: white; 
-            font-weight: 700; cursor: pointer; display: flex; 
-            align-items: center; justify-content: center; gap: 8px;
-            flex-direction: row-reverse; 
-        }
+        .btn-action { padding: 12px; border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; flex-direction: row-reverse; }
+        .btn-music-action { grid-column: span 2; display: none; background: #34ace0; }
         .btn-reset { grid-column: span 2; color: var(--text); }
         
         .history-section { width: 100%; margin-top: 30px; border-top: 1px solid var(--input-border); padding-top: 20px; }
@@ -227,12 +232,19 @@
             <i class="fas fa-paste paste-btn" onclick="pasteLink()"></i>
         </div>
         <button class="main-btn" onclick="processVideo()">
-            <span id="btnText">استخراج الفيديو</span>
+            <span id="btnText">استخراج المحتوى</span>
             <i class="far fa-star star-loader" id="starLoader"></i>
         </button>
 
         <div id="resultCard" class="video-card">
             <div id="videoContainer" class="video-preview" onclick="showControls(event)">
+                <div id="imageSlider">
+                    <div class="slider-wrapper" id="sliderWrapper"></div>
+                    <div class="slider-arrow slider-arrow-prev" onclick="changeImage(-1, event)"><i class="fas fa-chevron-left"></i></div>
+                    <div class="slider-arrow slider-arrow-next" onclick="changeImage(1, event)"><i class="fas fa-chevron-right"></i></div>
+                    <div class="slider-dots" id="sliderDots"></div>
+                </div>
+
                 <video id="videoPlayer" playsinline onclick="handleVideoTap(event)"></video>
                 
                 <div id="videoEndOverlay" class="video-end-overlay">
@@ -265,6 +277,7 @@
             <div class="actions">
                 <button onclick="downloadNow()" class="btn-action btn-download" style="background:var(--accent);"><span>حفظ</span> <i class="fas fa-download"></i></button>
                 <button onclick="copyLink()" class="btn-action btn-copy" style="background:var(--input-border); color:var(--text);"><span>نسخ</span> <i class="fas fa-copy"></i></button>
+                <button id="musicDownloadBtn" onclick="downloadMusic()" class="btn-action btn-music-action"><span>حفظ الموسيقى</span> <i class="fas fa-music"></i></button>
                 <button onclick="location.reload()" class="btn-action btn-reset" style="background:var(--input-border);"><span>جديد</span> <i class="fas fa-redo"></i></button>
             </div>
         </div>
@@ -285,7 +298,15 @@
 
     <script>
         let currentVideoLink = "";
+        let currentMusicLink = "";
+        let allImages = [];
+        let isImageMode = false;
+        let currentImageIndex = 0; 
         const video = document.getElementById('videoPlayer');
+        const imageSlider = document.getElementById('imageSlider');
+        const sliderWrapper = document.getElementById('sliderWrapper');
+        const sliderDots = document.getElementById('sliderDots');
+        const musicBtn = document.getElementById('musicDownloadBtn');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const progressBar = document.getElementById('progressBar');
         const progressContainer = document.getElementById('progressContainer');
@@ -294,47 +315,30 @@
         const controls = document.getElementById('controlsLayer');
         const endOverlay = document.getElementById('videoEndOverlay');
 
-        // إظهار وإخفاء الأزرار
-        function showControls(e) {
-            e.stopPropagation();
-            controls.classList.add('visible');
-        }
+        function showControls(e) { e.stopPropagation(); if(!isImageMode) controls.classList.add('visible'); }
+        function hideControls(e) { controls.classList.remove('visible'); }
 
-        function hideControls(e) {
-            controls.classList.remove('visible');
-        }
-
-        // التعامل مع النقر المزدوج (يمين يرجع - يسار يقدم)
         let tapCount = 0;
         let tapTimer = null;
         function handleVideoTap(e) {
+            if(isImageMode) return;
             tapCount++;
-            if (tapCount === 1) {
-                tapTimer = setTimeout(() => { tapCount = 0; }, 300);
-            } else if (tapCount === 2) {
+            if (tapCount === 1) { tapTimer = setTimeout(() => { tapCount = 0; }, 300); } 
+            else if (tapCount === 2) {
                 clearTimeout(tapTimer);
                 tapCount = 0;
                 const rect = video.getBoundingClientRect();
                 const x = e.clientX - rect.left;
-                if (x > rect.width / 2) {
-                    video.currentTime -= 10; // يمين: يرجع
-                    showFeedback('skipRight');
-                } else {
-                    video.currentTime += 10; // يسار: يقدم
-                    showFeedback('skipLeft');
-                }
+                if (x > rect.width / 2) { video.currentTime -= 10; showFeedback('skipRight'); } 
+                else { video.currentTime += 10; showFeedback('skipLeft'); }
             }
         }
 
-        function showFeedback(id) {
-            const el = document.getElementById(id);
-            el.style.display = 'flex';
-            setTimeout(() => { el.style.display = 'none'; }, 600);
-        }
+        function showFeedback(id) { const el = document.getElementById(id); el.style.display = 'flex'; setTimeout(() => { el.style.display = 'none'; }, 600); }
 
-        // التحكم في شريط التقدم (سحب YouTube)
         let isDragging = false;
         const updateSeek = (e) => {
+            if(isImageMode) return;
             const rect = progressContainer.getBoundingClientRect();
             let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
             x = Math.max(0, Math.min(x, rect.width));
@@ -350,25 +354,14 @@
         window.addEventListener('mouseup', () => { isDragging = false; });
         window.addEventListener('touchend', () => { isDragging = false; });
 
-        // تشغيل وإيقاف من الزر فقط
         function togglePlay(e) {
             e.stopPropagation();
-            if (video.paused) {
-                video.play();
-                playPauseBtn.className = 'fas fa-pause';
-                endOverlay.style.display = 'none';
-            } else {
-                video.pause();
-                playPauseBtn.className = 'fas fa-play';
-            }
+            if(isImageMode) return;
+            if (video.paused) { video.play(); playPauseBtn.className = 'fas fa-pause'; endOverlay.style.display = 'none'; } 
+            else { video.pause(); playPauseBtn.className = 'fas fa-play'; }
         }
 
-        function replayVideo() {
-            video.currentTime = 0;
-            video.play();
-            playPauseBtn.className = 'fas fa-pause';
-            endOverlay.style.display = 'none';
-        }
+        function replayVideo() { video.currentTime = 0; video.play(); playPauseBtn.className = 'fas fa-pause'; endOverlay.style.display = 'none'; }
 
         video.addEventListener('timeupdate', () => {
             if(!isDragging) {
@@ -381,16 +374,10 @@
         video.addEventListener('loadedmetadata', () => { totalTimeEl.innerText = formatTime(video.duration); });
         video.addEventListener('ended', () => { playPauseBtn.className = 'fas fa-play'; endOverlay.style.display = 'flex'; });
 
-        function formatTime(s) {
-            if(isNaN(s)) return "00:00";
-            let m = Math.floor(s/60), sec = Math.floor(s%60);
-            return `${m<10?'0'+m:m}:${sec<10?'0'+sec:sec}`;
-        }
-
+        function formatTime(s) { if(isNaN(s)) return "00:00"; let m = Math.floor(s/60), sec = Math.floor(s%60); return `${m<10?'0'+m:m}:${sec<10?'0'+sec:sec}`; }
         function toggleMute(e) { e.stopPropagation(); video.muted = !video.muted; document.getElementById('muteBtn').className = video.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up'; }
-        function toggleFullscreen(e) { e.stopPropagation(); if (video.requestFullscreen) video.requestFullscreen(); else if (video.webkitRequestFullscreen) video.webkitRequestFullscreen(); }
+        function toggleFullscreen(e) { e.stopPropagation(); const target = isImageMode ? imageSlider : video; if (target.requestFullscreen) target.requestFullscreen(); else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen(); }
 
-        // بقية الوظائف الأساسية (لا تغيير)
         function toggleOverlay(id) { document.getElementById(id).classList.toggle('active'); }
         function toggleTheme() { 
             const isDark = document.body.getAttribute('data-theme') === 'dark';
@@ -401,21 +388,81 @@
         if(localStorage.getItem('theme') === 'light') toggleTheme();
 
         function notify(msg) { const a = document.getElementById('customAlert'); document.getElementById('alertMsg').innerText = msg; a.classList.add('show'); setTimeout(()=>a.classList.remove('show'), 3000); }
-        async function pasteLink() { const t = await navigator.clipboard.readText(); document.getElementById('urlInput').value = t; notify("تم اللصق"); }
+        async function pasteLink() { try { const t = await navigator.clipboard.readText(); document.getElementById('urlInput').value = t; notify("تم اللصق"); } catch(e) { notify("يرجى إعطاء صلاحية النسخ"); } }
+
+        // تم تصحيح وظيفة التقليب لتعمل بدقة 100%
+        function changeImage(direction, e) {
+            if (e) e.stopPropagation();
+            if (!isImageMode || allImages.length === 0) return;
+            
+            currentImageIndex += direction;
+            if (currentImageIndex < 0) currentImageIndex = allImages.length - 1; 
+            if (currentImageIndex >= allImages.length) currentImageIndex = 0; 
+
+            updateSliderPosition();
+        }
+
+        function updateSliderPosition() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === currentImageIndex));
+            
+            // حساب المسافة بدقة بناءً على عرض الحاوية الحالي
+            const containerWidth = sliderWrapper.offsetWidth;
+            sliderWrapper.scrollTo({
+                left: currentImageIndex * containerWidth,
+                behavior: 'smooth'
+            });
+            currentVideoLink = allImages[currentImageIndex]; 
+        }
 
         async function processVideo() { 
-            const url = document.getElementById('urlInput').value; 
+            const url = document.getElementById('urlInput').value.trim(); 
             if(!url) return notify("ضع الرابط أولاً");
             document.getElementById('btnText').style.display = 'none'; 
             document.getElementById('starLoader').style.display = 'block'; 
+            
             try { 
                 let api = url.includes("tiktok.com") ? `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}` : `https://api.boxentriq.com/social/any?url=${encodeURIComponent(url)}`; 
-                const res = await fetch(api); const r = await res.json(); 
-                currentVideoLink = r.data?.play || r.video_url || r.url; 
-                if(currentVideoLink) { 
-                    video.src = currentVideoLink; document.getElementById('resultCard').style.display = 'block'; 
-                    saveToHistory(url, r.data?.cover || r.thumbnail || ""); notify("تم الاستخراج ✨"); 
-                } else throw Error();
+                const res = await fetch(api); 
+                const r = await res.json(); 
+                const d = r.data;
+
+                if (url.includes("tiktok.com") && d.images && d.images.length > 0) {
+                    isImageMode = true;
+                    currentImageIndex = 0; 
+                    video.style.display = 'none';
+                    imageSlider.style.display = 'block';
+                    controls.style.display = 'none';
+                    musicBtn.style.display = 'flex';
+                    
+                    allImages = d.images;
+                    currentMusicLink = d.music || "";
+                    sliderWrapper.innerHTML = d.images.map(img => `<img src="${img}" class="slider-img">`).join('');
+                    
+                    sliderDots.innerHTML = d.images.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('');
+                    
+                    // ضمان البداية من الصورة الأولى
+                    setTimeout(() => { updateSliderPosition(); }, 100);
+
+                    currentVideoLink = d.images[0]; 
+                    document.getElementById('resultCard').style.display = 'block'; 
+                    saveToHistory(url, d.images[0]); 
+                    notify("تم استخراج الصور ✨");
+                } else {
+                    isImageMode = false;
+                    video.style.display = 'block';
+                    imageSlider.style.display = 'none';
+                    controls.style.display = 'flex';
+                    musicBtn.style.display = 'none';
+                    
+                    currentVideoLink = d?.play || r.video_url || r.url; 
+                    if(currentVideoLink) { 
+                        video.src = currentVideoLink; 
+                        document.getElementById('resultCard').style.display = 'block'; 
+                        saveToHistory(url, d?.cover || r.thumbnail || ""); 
+                        notify("تم استخراج الفيديو ✨"); 
+                    } else throw Error();
+                }
             } catch { notify("الرابط غير مدعوم"); } 
             finally { document.getElementById('btnText').style.display = 'block'; document.getElementById('starLoader').style.display = 'none'; } 
         }
@@ -436,10 +483,38 @@
         }
 
         function reDownload(u) { document.getElementById('urlInput').value = u; document.getElementById('archiveOverlay').classList.remove('active'); processVideo(); }
-        async function downloadNow() { if(!currentVideoLink) return; notify("جاري الحفظ..."); const r = await fetch(currentVideoLink); const b = await r.blob(); const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = `WeStars_${Date.now()}.mp4`; a.click(); }
+        
+        async function downloadNow() { 
+            if(!currentVideoLink) return; 
+            notify("جاري الحفظ..."); 
+            try {
+                const r = await fetch(currentVideoLink); 
+                const b = await r.blob(); 
+                const u = window.URL.createObjectURL(b); 
+                const a = document.createElement('a'); 
+                a.href = u; 
+                a.download = `WeStars_${Date.now()}.${isImageMode ? 'jpg' : 'mp4'}`; 
+                a.click();
+            } catch(e) { notify("خطأ في التحميل"); }
+        }
+
+        async function downloadMusic() {
+            if(!currentMusicLink) return notify("لا توجد موسيقى");
+            notify("جاري حفظ الموسيقى...");
+            try {
+                const r = await fetch(currentMusicLink);
+                const b = await r.blob();
+                const u = window.URL.createObjectURL(b);
+                const a = document.createElement('a');
+                a.href = u;
+                a.download = `WeStars_Music_${Date.now()}.mp3`;
+                a.click();
+            } catch(e) { notify("فشل تحميل الموسيقى"); }
+        }
+
         function copyLink() { navigator.clipboard.writeText(currentVideoLink); notify("تم النسخ"); }
         window.onload = renderHistory;
+        window.onresize = () => { if(isImageMode) updateSliderPosition(); };
     </script>
 </body>
 </html>
-     
