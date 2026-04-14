@@ -110,8 +110,8 @@
         .slider-wrapper { 
             display: flex; 
             width: 100%;
-            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-            touch-action: none;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            touch-action: pan-y;
             direction: ltr;
         }
         .slider-img { width: 100%; flex-shrink: 0; object-fit: contain; max-height: 600px; min-height: 300px; display: block; }
@@ -148,14 +148,13 @@
         .custom-controls.visible { opacity: 1; visibility: visible; }
         .time-display { display: flex; justify-content: space-between; font-size: 0.8rem; color: #fff; font-family: monospace; }
         
-        /* تحسين سمك الشريط وموقع الدائرة */
         .progress-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,0.25); border-radius: 2px; cursor: pointer; position: relative; margin: 12px 0; }
-        .progress-bar-fill { height: 100%; background: var(--primary); width: 0%; border-radius: 2px; position: absolute; top: 0; right: 0; pointer-events: none; }
+        .progress-bar-fill { height: 100%; background: var(--primary); width: 0%; border-radius: 2px; position: absolute; top: 0; left: 0; pointer-events: none; }
         .progress-handle { 
             position: absolute; 
             top: 50%; 
-            left: 0; /* التثبيت في بداية الشريط الملون */
-            transform: translate(-50%, -50%); 
+            right: 0; 
+            transform: translate(50%, -50%); 
             width: 14px; 
             height: 14px; 
             background: #ffffff; 
@@ -345,13 +344,10 @@
         window.addEventListener('mouseup', () => { isDragging = false; });
         window.addEventListener('touchend', () => { isDragging = false; });
 
-        function handleArrowClick(logicDir, e) {
+        function handleArrowClick(direction, e) {
             if (e) e.stopPropagation();
-            changeImage(logicDir);
-        }
-
-        function changeImage(direction) {
             if (!isImageMode || allImages.length === 0) return;
+            // عكس الاتجاه: +1 للسهم الأيمن (Next) و -1 للسهم الأيسر (Prev)
             currentImageIndex += direction;
             if (currentImageIndex < 0) currentImageIndex = allImages.length - 1; 
             if (currentImageIndex >= allImages.length) currentImageIndex = 0; 
@@ -361,7 +357,7 @@
         function updateSliderPosition() {
             const dots = document.querySelectorAll('.dot');
             dots.forEach((dot, i) => dot.classList.toggle('active', i === currentImageIndex));
-            sliderWrapper.style.transform = `translateX(${currentImageIndex * 100}%)`; 
+            sliderWrapper.style.transform = `translateX(-${currentImageIndex * 100}%)`; 
             currentVideoLink = allImages[currentImageIndex]; 
         }
 
@@ -427,3 +423,4 @@
     </script>
 </body>
 </html>
+
