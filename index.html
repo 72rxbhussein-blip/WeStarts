@@ -109,71 +109,71 @@
         #imageSlider { width: 100%; display: none; position: relative; background: #000; overflow: hidden; }
         .slider-wrapper { 
             display: flex; 
-            overflow-x: hidden;
-            scrollbar-width: none; 
-            -ms-overflow-style: none; 
-            scroll-behavior: smooth; 
-            touch-action: none;
             width: 100%;
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            touch-action: none;
+            direction: ltr;
         }
-        .slider-wrapper::-webkit-scrollbar { display: none; }
         .slider-img { width: 100%; flex-shrink: 0; object-fit: contain; max-height: 600px; min-height: 300px; display: block; }
         
         .slider-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
-            width: 40px; height: 40px;
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(8px);
+            width: 44px; height: 44px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             color: #fff;
-            font-size: 0.9rem;
+            font-size: 1.1rem;
             cursor: pointer;
-            z-index: 35;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            opacity: 0.8;
+            z-index: 100;
+            transition: 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        .slider-arrow:hover { background: rgba(255, 255, 255, 0.25); transform: translateY(-50%) scale(1.1); opacity: 1; }
-        .slider-arrow-prev { left: 12px; }
-        .slider-arrow-next { right: 12px; }
+        .slider-arrow-prev { left: 10px; } 
+        .slider-arrow-next { right: 10px; }
 
         .slider-dots {
             position: absolute; bottom: 15px; left: 50%;
             transform: translateX(-50%);
-            display: flex; gap: 6px; z-index: 30;
-            background: rgba(0,0,0,0.3);
-            padding: 6px 12px;
+            display: flex; gap: 8px; z-index: 90;
+            background: rgba(0,0,0,0.4);
+            padding: 5px 12px;
             border-radius: 20px;
         }
-        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.4); border-radius: 50%; transition: all 0.4s ease; }
-        .dot.active { background: #fff; transform: scale(1.4); }
+        .dot { width: 7px; height: 7px; background: rgba(255,255,255,0.3); border-radius: 50%; transition: 0.4s; }
+        .dot.active { background: #fff; transform: scale(1.3); }
 
-        .custom-controls {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            padding: 15px; display: flex; flex-direction: column; gap: 8px;
-            opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s;
-            z-index: 20;
-        }
+        .custom-controls { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 15px; display: flex; flex-direction: column; gap: 8px; opacity: 0; visibility: hidden; transition: 0.3s; z-index: 20; }
         .custom-controls.visible { opacity: 1; visibility: visible; }
+        .time-display { display: flex; justify-content: space-between; font-size: 0.8rem; color: #fff; font-family: monospace; }
         
-        .time-display { display: flex; justify-content: space-between; font-size: 0.8rem; color: #fff; font-family: monospace; margin-bottom: -5px; }
-        .progress-bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 10px; cursor: pointer; position: relative; display: flex; align-items: center; padding: 10px 0; }
-        .progress-bar-fill { height: 6px; background: var(--primary); width: 0%; border-radius: 10px; position: relative; pointer-events: none; }
-        .progress-bar-fill::after { content: ''; position: absolute; left: -8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-
-        .player-btns { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; }
+        /* تحسين سمك الشريط وموقع الدائرة */
+        .progress-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,0.25); border-radius: 2px; cursor: pointer; position: relative; margin: 12px 0; }
+        .progress-bar-fill { height: 100%; background: var(--primary); width: 0%; border-radius: 2px; position: absolute; top: 0; right: 0; pointer-events: none; }
+        .progress-handle { 
+            position: absolute; 
+            top: 50%; 
+            left: 0; /* التثبيت في بداية الشريط الملون */
+            transform: translate(-50%, -50%); 
+            width: 14px; 
+            height: 14px; 
+            background: #ffffff; 
+            border-radius: 50%; 
+            box-shadow: 0 0 6px rgba(0,0,0,0.6);
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        .player-btns { display: flex; align-items: center; justify-content: space-between; }
         .player-btns-group { display: flex; align-items: center; gap: 18px; }
-        .player-btns i { color: #fff; font-size: 1.4rem; cursor: pointer; transition: 0.2s; }
+        .player-btns i { color: #fff; font-size: 1.4rem; cursor: pointer; }
 
-        .skip-feedback { position: absolute; top: 50%; transform: translateY(-50%); width: 80px; height: 80px; background: rgba(255,255,255,0.15); border-radius: 50%; display: none; align-items: center; justify-content: center; flex-direction: column; font-size: 0.8rem; color: #fff; z-index: 5; pointer-events: none; animation: skipFade 0.6s ease-out; }
+        .skip-feedback { position: absolute; top: 50%; transform: translateY(-50%); width: 80px; height: 80px; background: rgba(255,255,255,0.15); border-radius: 50%; display: none; align-items: center; justify-content: center; flex-direction: column; font-size: 0.8rem; color: #fff; z-index: 5; pointer-events: none; }
         .skip-left { left: 15%; } .skip-right { right: 15%; }
-        @keyframes skipFade { 0% { opacity: 0; transform: translateY(-50%) scale(0.5); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(-50%) scale(1.2); } }
 
-        .video-end-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 25; }
-        .replay-icon { width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; box-shadow: 0 0 20px rgba(108, 92, 231, 0.5); }
+        .video-end-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 25; }
+        .replay-icon { width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; }
 
         .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
         .btn-action { padding: 12px; border: none; border-radius: 12px; color: white; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; flex-direction: row-reverse; }
@@ -186,10 +186,11 @@
         .archive-trigger { color: var(--primary); font-size: 1.2rem; cursor: pointer; }
         .history-item { background: var(--card); padding: 15px; border-radius: 20px; margin-bottom: 12px; border: 1px solid var(--input-border); display: flex; align-items: center; justify-content: space-between; gap: 15px; width: 100%; }
         .history-content { flex: 1; display: flex; flex-direction: column; justify-content: space-between; min-height: 65px; overflow: hidden; }
-        .history-url { direction: ltr; font-size: 0.8rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 10px; }
+        .history-url { direction: ltr; font-size: 0.8rem; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .history-btn { color: var(--primary); font-weight: 700; cursor: pointer; font-size: 0.9rem; align-self: flex-start; }
         .history-thumb { width: 65px; height: 65px; border-radius: 12px; object-fit: cover; background: #222; flex-shrink: 0; }
-        #customAlert { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid var(--input-border); display: flex; align-items: center; gap: 10px; z-index: 10000; transition: 0.4s ease; color: var(--text); }
+        
+        #customAlert { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid var(--input-border); display: flex; align-items: center; gap: 10px; z-index: 10000; transition: 0.4s; color: var(--text); }
         #customAlert.show { top: 20px; }
         .star-loader { display: none; font-size: 1.4rem; color: transparent; -webkit-text-stroke: 1.5px var(--star-color); animation: starAnim 1s infinite linear; }
         @keyframes starAnim { to { transform: rotate(360deg); } }
@@ -240,29 +241,26 @@
             <div id="videoContainer" class="video-preview" onclick="showControls(event)">
                 <div id="imageSlider">
                     <div class="slider-wrapper" id="sliderWrapper"></div>
-                    <div class="slider-arrow slider-arrow-prev" onclick="changeImage(-1, event)"><i class="fas fa-chevron-left"></i></div>
-                    <div class="slider-arrow slider-arrow-next" onclick="changeImage(1, event)"><i class="fas fa-chevron-right"></i></div>
+                    <div class="slider-arrow slider-arrow-prev" onclick="handleArrowClick(1, event)"><i class="fas fa-chevron-left"></i></div>
+                    <div class="slider-arrow slider-arrow-next" onclick="handleArrowClick(-1, event)"><i class="fas fa-chevron-right"></i></div>
                     <div class="slider-dots" id="sliderDots"></div>
                 </div>
 
                 <video id="videoPlayer" playsinline onclick="handleVideoTap(event)"></video>
                 
                 <div id="videoEndOverlay" class="video-end-overlay">
-                    <div class="replay-icon" onclick="replayVideo()">
-                        <i class="fas fa-redo-alt"></i>
-                    </div>
+                    <div class="replay-icon" onclick="replayVideo()"><i class="fas fa-redo-alt"></i></div>
                 </div>
 
                 <div id="skipLeft" class="skip-feedback skip-left"><i class="fas fa-forward"></i><span>10s</span></div>
                 <div id="skipRight" class="skip-feedback skip-right"><i class="fas fa-backward"></i><span>10s</span></div>
 
                 <div class="custom-controls" id="controlsLayer">
-                    <div class="time-display">
-                        <span id="currentTime">00:00</span>
-                        <span id="totalTime">00:00</span>
-                    </div>
+                    <div class="time-display"><span id="currentTime">00:00</span><span id="totalTime">00:00</span></div>
                     <div class="progress-bar-container" id="progressContainer">
-                        <div class="progress-bar-fill" id="progressBar"></div>
+                        <div class="progress-bar-fill" id="progressBar">
+                            <div class="progress-handle"></div>
+                        </div>
                     </div>
                     <div class="player-btns">
                         <div class="player-btns-group">
@@ -283,70 +281,63 @@
         </div>
 
         <div class="history-section" id="historySection">
-            <div class="history-header">
-                <h3>آخر التحميلات:</h3>
-                <i class="fas fa-box-archive archive-trigger" onclick="toggleOverlay('archiveOverlay')" title="الأرشيف"></i>
-            </div>
+            <div class="history-header"><h3>آخر التحميلات:</h3><i class="fas fa-box-archive archive-trigger" onclick="toggleOverlay('archiveOverlay')"></i></div>
             <div id="mainHistoryList"></div>
         </div>
     </div>
 
-    <div id="customAlert">
-        <i id="alertIcon" class="fas fa-info-circle"></i>
-        <span id="alertMsg"></span>
-    </div>
+    <div id="customAlert"><i id="alertIcon" class="fas fa-info-circle"></i><span id="alertMsg"></span></div>
 
     <script>
-        let currentVideoLink = "";
-        let currentMusicLink = "";
-        let allImages = [];
-        let isImageMode = false;
-        let currentImageIndex = 0; 
-        const video = document.getElementById('videoPlayer');
-        const imageSlider = document.getElementById('imageSlider');
-        const sliderWrapper = document.getElementById('sliderWrapper');
-        const sliderDots = document.getElementById('sliderDots');
-        const musicBtn = document.getElementById('musicDownloadBtn');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const progressBar = document.getElementById('progressBar');
-        const progressContainer = document.getElementById('progressContainer');
-        const currentTimeEl = document.getElementById('currentTime');
-        const totalTimeEl = document.getElementById('totalTime');
-        const controls = document.getElementById('controlsLayer');
-        const endOverlay = document.getElementById('videoEndOverlay');
+        let currentVideoLink = "", currentMusicLink = "", allImages = [], isImageMode = false, currentImageIndex = 0; 
+        const video = document.getElementById('videoPlayer'), imageSlider = document.getElementById('imageSlider'), sliderWrapper = document.getElementById('sliderWrapper');
+        const sliderDots = document.getElementById('sliderDots'), musicBtn = document.getElementById('musicDownloadBtn'), controls = document.getElementById('controlsLayer');
+        const playPauseBtn = document.getElementById('playPauseBtn'), progressBar = document.getElementById('progressBar'), progressContainer = document.getElementById('progressContainer');
+        const currentTimeEl = document.getElementById('currentTime'), totalTimeEl = document.getElementById('totalTime');
 
         function showControls(e) { e.stopPropagation(); if(!isImageMode) controls.classList.add('visible'); }
         function hideControls(e) { controls.classList.remove('visible'); }
 
-        let tapCount = 0;
-        let tapTimer = null;
+        let tapCount = 0, tapTimer = null;
         function handleVideoTap(e) {
             if(isImageMode) return;
             tapCount++;
             if (tapCount === 1) { tapTimer = setTimeout(() => { tapCount = 0; }, 300); } 
             else if (tapCount === 2) {
-                clearTimeout(tapTimer);
-                tapCount = 0;
+                clearTimeout(tapTimer); tapCount = 0;
                 const rect = video.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                if (x > rect.width / 2) { video.currentTime -= 10; showFeedback('skipRight'); } 
+                if ((e.clientX - rect.left) > rect.width / 2) { video.currentTime -= 10; showFeedback('skipRight'); } 
                 else { video.currentTime += 10; showFeedback('skipLeft'); }
             }
         }
-
         function showFeedback(id) { const el = document.getElementById(id); el.style.display = 'flex'; setTimeout(() => { el.style.display = 'none'; }, 600); }
+
+        function togglePlay(e) { e.stopPropagation(); if(video.paused) { video.play(); playPauseBtn.className = 'fas fa-pause'; } else { video.pause(); playPauseBtn.className = 'fas fa-play'; } }
+        function replayVideo() { video.currentTime = 0; video.play(); document.getElementById('videoEndOverlay').style.display = 'none'; }
+        function toggleMute(e) { e.stopPropagation(); video.muted = !video.muted; document.getElementById('muteBtn').className = video.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up'; }
+        function toggleFullscreen(e) { e.stopPropagation(); const target = isImageMode ? imageSlider : video; if (target.requestFullscreen) target.requestFullscreen(); else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen(); }
+
+        video.addEventListener('timeupdate', () => { 
+            if(!isDragging) { 
+                const p = (video.currentTime / video.duration) * 100;
+                progressBar.style.width = `${p}%`; 
+                currentTimeEl.innerText = formatTime(video.currentTime); 
+            } 
+        });
+        video.addEventListener('loadedmetadata', () => { totalTimeEl.innerText = formatTime(video.duration); });
+        video.addEventListener('ended', () => { playPauseBtn.className = 'fas fa-play'; document.getElementById('videoEndOverlay').style.display = 'flex'; });
+        function formatTime(s) { if(isNaN(s) || s < 0) return "00:00"; let m = Math.floor(s/60), sec = Math.floor(s%60); return `${m<10?'0'+m:m}:${sec<10?'0'+sec:sec}`; }
 
         let isDragging = false;
         const updateSeek = (e) => {
-            if(isImageMode) return;
+            if(isImageMode || !video.duration) return;
             const rect = progressContainer.getBoundingClientRect();
-            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-            x = Math.max(0, Math.min(x, rect.width));
-            const pos = x / rect.width;
+            let clientX = (e.touches ? e.touches[0].clientX : e.clientX);
+            let x = clientX - rect.left;
+            let pos = Math.max(0, Math.min(x, rect.width)) / rect.width;
             video.currentTime = pos * video.duration;
             progressBar.style.width = `${pos * 100}%`;
         };
-
         progressContainer.addEventListener('mousedown', (e) => { isDragging = true; updateSeek(e); e.stopPropagation(); });
         progressContainer.addEventListener('touchstart', (e) => { isDragging = true; updateSeek(e); e.stopPropagation(); });
         window.addEventListener('mousemove', (e) => { if(isDragging) updateSeek(e); });
@@ -354,64 +345,23 @@
         window.addEventListener('mouseup', () => { isDragging = false; });
         window.addEventListener('touchend', () => { isDragging = false; });
 
-        function togglePlay(e) {
-            e.stopPropagation();
-            if(isImageMode) return;
-            if (video.paused) { video.play(); playPauseBtn.className = 'fas fa-pause'; endOverlay.style.display = 'none'; } 
-            else { video.pause(); playPauseBtn.className = 'fas fa-play'; }
-        }
-
-        function replayVideo() { video.currentTime = 0; video.play(); playPauseBtn.className = 'fas fa-pause'; endOverlay.style.display = 'none'; }
-
-        video.addEventListener('timeupdate', () => {
-            if(!isDragging) {
-                const percent = (video.currentTime / video.duration) * 100;
-                progressBar.style.width = `${percent}%`;
-                currentTimeEl.innerText = formatTime(video.currentTime);
-            }
-        });
-
-        video.addEventListener('loadedmetadata', () => { totalTimeEl.innerText = formatTime(video.duration); });
-        video.addEventListener('ended', () => { playPauseBtn.className = 'fas fa-play'; endOverlay.style.display = 'flex'; });
-
-        function formatTime(s) { if(isNaN(s)) return "00:00"; let m = Math.floor(s/60), sec = Math.floor(s%60); return `${m<10?'0'+m:m}:${sec<10?'0'+sec:sec}`; }
-        function toggleMute(e) { e.stopPropagation(); video.muted = !video.muted; document.getElementById('muteBtn').className = video.muted ? 'fas fa-volume-mute' : 'fas fa-volume-up'; }
-        function toggleFullscreen(e) { e.stopPropagation(); const target = isImageMode ? imageSlider : video; if (target.requestFullscreen) target.requestFullscreen(); else if (target.webkitRequestFullscreen) target.webkitRequestFullscreen(); }
-
-        function toggleOverlay(id) { document.getElementById(id).classList.toggle('active'); }
-        function toggleTheme() { 
-            const isDark = document.body.getAttribute('data-theme') === 'dark';
-            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            document.getElementById('themeBtn').innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-        }
-        if(localStorage.getItem('theme') === 'light') toggleTheme();
-
-        function notify(msg) { const a = document.getElementById('customAlert'); document.getElementById('alertMsg').innerText = msg; a.classList.add('show'); setTimeout(()=>a.classList.remove('show'), 3000); }
-        async function pasteLink() { try { const t = await navigator.clipboard.readText(); document.getElementById('urlInput').value = t; notify("تم اللصق"); } catch(e) { notify("يرجى إعطاء صلاحية النسخ"); } }
-
-        // تم تصحيح وظيفة التقليب لتعمل بدقة 100%
-        function changeImage(direction, e) {
+        function handleArrowClick(logicDir, e) {
             if (e) e.stopPropagation();
+            changeImage(logicDir);
+        }
+
+        function changeImage(direction) {
             if (!isImageMode || allImages.length === 0) return;
-            
             currentImageIndex += direction;
             if (currentImageIndex < 0) currentImageIndex = allImages.length - 1; 
             if (currentImageIndex >= allImages.length) currentImageIndex = 0; 
-
             updateSliderPosition();
         }
 
         function updateSliderPosition() {
             const dots = document.querySelectorAll('.dot');
             dots.forEach((dot, i) => dot.classList.toggle('active', i === currentImageIndex));
-            
-            // حساب المسافة بدقة بناءً على عرض الحاوية الحالي
-            const containerWidth = sliderWrapper.offsetWidth;
-            sliderWrapper.scrollTo({
-                left: currentImageIndex * containerWidth,
-                behavior: 'smooth'
-            });
+            sliderWrapper.style.transform = `translateX(${currentImageIndex * 100}%)`; 
             currentVideoLink = allImages[currentImageIndex]; 
         }
 
@@ -420,49 +370,26 @@
             if(!url) return notify("ضع الرابط أولاً");
             document.getElementById('btnText').style.display = 'none'; 
             document.getElementById('starLoader').style.display = 'block'; 
-            
             try { 
                 let api = url.includes("tiktok.com") ? `https://www.tikwm.com/api/?url=${encodeURIComponent(url)}` : `https://api.boxentriq.com/social/any?url=${encodeURIComponent(url)}`; 
-                const res = await fetch(api); 
-                const r = await res.json(); 
-                const d = r.data;
-
+                const res = await fetch(api); const r = await res.json(); const d = r.data;
                 if (url.includes("tiktok.com") && d.images && d.images.length > 0) {
-                    isImageMode = true;
-                    currentImageIndex = 0; 
-                    video.style.display = 'none';
-                    imageSlider.style.display = 'block';
-                    controls.style.display = 'none';
-                    musicBtn.style.display = 'flex';
-                    
-                    allImages = d.images;
-                    currentMusicLink = d.music || "";
+                    isImageMode = true; currentImageIndex = 0; 
+                    video.style.display = 'none'; imageSlider.style.display = 'block';
+                    controls.style.display = 'none'; musicBtn.style.display = 'flex';
+                    allImages = d.images; currentMusicLink = d.music || "";
                     sliderWrapper.innerHTML = d.images.map(img => `<img src="${img}" class="slider-img">`).join('');
-                    
                     sliderDots.innerHTML = d.images.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}"></div>`).join('');
-                    
-                    // ضمان البداية من الصورة الأولى
-                    setTimeout(() => { updateSliderPosition(); }, 100);
-
+                    sliderWrapper.style.transform = 'translateX(0%)';
                     currentVideoLink = d.images[0]; 
-                    document.getElementById('resultCard').style.display = 'block'; 
-                    saveToHistory(url, d.images[0]); 
-                    notify("تم استخراج الصور ✨");
+                    saveToHistory(url, d.images[0]); notify("تم استخراج الصور ✨");
                 } else {
-                    isImageMode = false;
-                    video.style.display = 'block';
-                    imageSlider.style.display = 'none';
-                    controls.style.display = 'flex';
-                    musicBtn.style.display = 'none';
-                    
+                    isImageMode = false; video.style.display = 'block'; imageSlider.style.display = 'none';
+                    controls.style.display = 'flex'; musicBtn.style.display = 'none';
                     currentVideoLink = d?.play || r.video_url || r.url; 
-                    if(currentVideoLink) { 
-                        video.src = currentVideoLink; 
-                        document.getElementById('resultCard').style.display = 'block'; 
-                        saveToHistory(url, d?.cover || r.thumbnail || ""); 
-                        notify("تم استخراج الفيديو ✨"); 
-                    } else throw Error();
+                    if(currentVideoLink) { video.src = currentVideoLink; saveToHistory(url, d?.cover || r.thumbnail || ""); notify("تم استخراج الفيديو ✨"); } else throw Error();
                 }
+                document.getElementById('resultCard').style.display = 'block';
             } catch { notify("الرابط غير مدعوم"); } 
             finally { document.getElementById('btnText').style.display = 'block'; document.getElementById('starLoader').style.display = 'none'; } 
         }
@@ -472,49 +399,31 @@
             h = h.filter(i => i.url !== url); h.unshift({url, thumb}); 
             localStorage.setItem('ws_history_v2', JSON.stringify(h)); renderHistory(); 
         }
-
         function renderHistory() { 
             const h = JSON.parse(localStorage.getItem('ws_history_v2') || '[]'); 
             const main = document.getElementById('mainHistoryList'), full = document.getElementById('fullHistoryContainer'); 
-            if(!h.length) { main.innerHTML = '<p style="text-align:center; opacity:0.5;">لا توجد تحميلات</p>'; return; } 
-            const html = h.map(i => `<div class="history-item"><div class="history-content"><div class="history-url">${i.url}</div><div class="history-btn" onclick="reDownload('${i.url}')">إعادة تحميل</div></div><img src="${i.thumb}" class="history-thumb" onerror="this.src='https://via.placeholder.com/65/222/fff?text=Video'"></div>`).join('');
-            main.innerHTML = h.slice(0,3).map(i => `<div class="history-item"><div class="history-content"><div class="history-url">${i.url}</div><div class="history-btn" onclick="reDownload('${i.url}')">إعادة تحميل</div></div><img src="${i.thumb}" class="history-thumb" onerror="this.src='https://via.placeholder.com/65/222/fff?text=Video'"></div>`).join('');
+            if(!h.length) return;
+            const html = h.map(i => `<div class="history-item"><div class="history-content"><div class="history-url">${i.url}</div><div class="history-btn" onclick="reDownload('${i.url}')">إعادة تحميل</div></div><img src="${i.thumb}" class="history-thumb"></div>`).join('');
+            main.innerHTML = h.slice(0,3).map(i => `<div class="history-item"><div class="history-content"><div class="history-url">${i.url}</div><div class="history-btn" onclick="reDownload('${i.url}')">إعادة تحميل</div></div><img src="${i.thumb}" class="history-thumb"></div>`).join('');
             full.innerHTML = html;
         }
-
-        function reDownload(u) { document.getElementById('urlInput').value = u; document.getElementById('archiveOverlay').classList.remove('active'); processVideo(); }
-        
-        async function downloadNow() { 
-            if(!currentVideoLink) return; 
-            notify("جاري الحفظ..."); 
-            try {
-                const r = await fetch(currentVideoLink); 
-                const b = await r.blob(); 
-                const u = window.URL.createObjectURL(b); 
-                const a = document.createElement('a'); 
-                a.href = u; 
-                a.download = `WeStars_${Date.now()}.${isImageMode ? 'jpg' : 'mp4'}`; 
-                a.click();
-            } catch(e) { notify("خطأ في التحميل"); }
+        function toggleOverlay(id) { document.getElementById(id).classList.toggle('active'); }
+        function toggleTheme() { 
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('themeBtn').innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         }
-
-        async function downloadMusic() {
-            if(!currentMusicLink) return notify("لا توجد موسيقى");
-            notify("جاري حفظ الموسيقى...");
-            try {
-                const r = await fetch(currentMusicLink);
-                const b = await r.blob();
-                const u = window.URL.createObjectURL(b);
-                const a = document.createElement('a');
-                a.href = u;
-                a.download = `WeStars_Music_${Date.now()}.mp3`;
-                a.click();
-            } catch(e) { notify("فشل تحميل الموسيقى"); }
+        function notify(msg) { const a = document.getElementById('customAlert'); document.getElementById('alertMsg').innerText = msg; a.classList.add('show'); setTimeout(()=>a.classList.remove('show'), 3000); }
+        async function pasteLink() { try { const t = await navigator.clipboard.readText(); document.getElementById('urlInput').value = t; notify("تم اللصق"); } catch(e) {} }
+        function reDownload(u) { 
+            document.getElementById('urlInput').value = u; 
+            document.getElementById('archiveOverlay').classList.remove('active');
+            processVideo(); 
         }
-
+        async function downloadNow() { if(!currentVideoLink) return; notify("جاري الحفظ..."); const r = await fetch(currentVideoLink); const b = await r.blob(); const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = `WeStars_${Date.now()}.${isImageMode?'jpg':'mp4'}`; a.click(); }
+        async function downloadMusic() { if(!currentMusicLink) return; notify("جاري حفظ الموسيقى..."); const r = await fetch(currentMusicLink); const b = await r.blob(); const u = window.URL.createObjectURL(b); const a = document.createElement('a'); a.href = u; a.download = `Music_${Date.now()}.mp3`; a.click(); }
         function copyLink() { navigator.clipboard.writeText(currentVideoLink); notify("تم النسخ"); }
         window.onload = renderHistory;
-        window.onresize = () => { if(isImageMode) updateSliderPosition(); };
     </script>
 </body>
 </html>
